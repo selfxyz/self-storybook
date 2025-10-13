@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     fontWeight: '700',
     cursor: 'pointer',
-    display: 'inline-flex',
+    display: 'flex',
   },
   button_primary: {
     backgroundColor: '#1ea7fd',

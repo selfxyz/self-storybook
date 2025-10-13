@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     lineHeight: 40,
     fontWeight: '700',
     marginBottom: 20,
-    display: 'inline-flex',
+    display: 'flex',
     color: '#333',
   },
   paragraph: {
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   tipIcon: {
-    display: 'inline-flex',
+    display: 'flex',
     verticalAlign: 'middle',
   },
 });

@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 1,
     marginLeft: 10,
-    display: 'inline-flex',
+    display: 'flex',
     verticalAlign: 'top',
   },
   rightSection: {
