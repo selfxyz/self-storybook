@@ -70,8 +70,8 @@ export const Secondary: Story = {
  */
 export const Large: Story = {
   args: {
-    size: "small",
-    label: "Test",
+    size: 'small',
+    label: 'Test',
   },
 };
 
