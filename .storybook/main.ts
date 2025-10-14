@@ -1,4 +1,66 @@
 import type { StorybookConfig } from '@storybook/react-vite';
+import type { Plugin } from 'vite';
+
+// Plugin to inject missing React Native APIs into react-native-web
+const reactNativeWebPlugin = (): Plugin => ({
+  name: 'react-native-web-shim',
+  transform(code, id) {
+    // Only transform the react-native-web main export
+    if (id.includes('node_modules/react-native-web/dist/index.js')) {
+      // Check if we've already applied the shim
+      if (code.includes('/* STORYBOOK_SHIM_APPLIED */')) {
+        return null; // Already transformed, skip
+      }
+
+      // Check if UnimplementedView is already imported/exported
+      const hasUnimplementedView = code.includes('UnimplementedView');
+
+      // Add missing exports using the existing UnimplementedView
+      const shimCode = hasUnimplementedView
+        ? `
+/* STORYBOOK_SHIM_APPLIED */
+${
+  code.includes('requireNativeComponent')
+    ? ''
+    : `
+export const requireNativeComponent = (name) => {
+  console.warn(\`requireNativeComponent("\${name}") is not supported on web\`);
+  return UnimplementedView;
+};
+`
+}
+// Shim for useAnimatedValue - not supported in react-native-web
+// Return a mock ref that can be used in components
+export const useAnimatedValue = (initialValue) => {
+  const { useRef } = require('react');
+  return useRef({ value: initialValue, setValue: () => {} }).current;
+};
+`
+        : `
+/* STORYBOOK_SHIM_APPLIED */
+import UnimplementedView from './cjs/modules/UnimplementedView';
+${
+  code.includes('requireNativeComponent')
+    ? ''
+    : `
+export const requireNativeComponent = (name) => {
+  console.warn(\`requireNativeComponent("\${name}") is not supported on web\`);
+  return UnimplementedView;
+};
+`
+}
+// Shim for useAnimatedValue - not supported in react-native-web
+// Return a mock ref that can be used in components
+export const useAnimatedValue = (initialValue) => {
+  const { useRef } = require('react');
+  return useRef({ value: initialValue, setValue: () => {} }).current;
+};
+`;
+      return code + shimCode;
+    }
+    return null;
+  },
+});
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
@@ -24,6 +86,7 @@ const config: StorybookConfig = {
 
     return {
       ...config,
+      plugins: [...(config.plugins || []), reactNativeWebPlugin()],
       // Disable server file system access checks for production
       server: {
         ...config.server,

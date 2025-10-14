@@ -282,7 +282,7 @@ Coverage reports are generated in `coverage/` directory.
 - **Config**: `vitest.config.ts`
 - **Environment**: jsdom (for React components)
 - **Coverage**: v8 provider with HTML reports
-- **Setup**: `.storybook/vitest.setup.ts` (includes Storybook annotations)
+- **Setup**: `.storybook/vitest.setup.tsx` (includes Storybook annotations)
 
 ## 🎨 Accessibility (a11y)
 
@@ -425,7 +425,7 @@ self-storybook/
 ├── .storybook/              # Storybook configuration
 │   ├── main.ts
 │   ├── preview.tsx
-│   └── vitest.setup.ts
+│   └── vitest.setup.tsx
 ├── .vscode/                 # VS Code settings
 │   └── settings.json
 ├── src/

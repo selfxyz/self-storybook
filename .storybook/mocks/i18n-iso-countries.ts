@@ -1,0 +1,46 @@
+// Mock for i18n-iso-countries to avoid JSON import attribute issues in tests
+
+const mock = {
+  registerLocale: () => {},
+  getName: (code: string, _lang?: string) => code?.toUpperCase() || 'Unknown',
+  getNames: (_lang: string) => ({}),
+  getAlpha2Code: (_name: string, _lang: string) => 'US',
+  getAlpha3Code: (_name: string, _lang: string) => 'USA',
+  getAlpha2Codes: () => ({}),
+  getAlpha3Codes: () => ({}),
+  getSimpleAlpha2Codes: () => ({}),
+  getSimpleAlpha3Codes: () => ({}),
+  alpha2ToAlpha3: (_alpha2: string) => 'USA',
+  alpha3ToAlpha2: (_alpha3: string) => 'US',
+  getNumericCodes: () => ({}),
+  alpha2ToNumeric: (_alpha2: string) => '840',
+  alpha3ToNumeric: (_alpha3: string) => '840',
+  numericToAlpha2: (_numeric: string) => 'US',
+  numericToAlpha3: (_numeric: string) => 'USA',
+  isValid: (_code: string) => true,
+  langs: () => [],
+  getSupportedLanguages: () => ['en'],
+};
+
+export default mock;
+export const {
+  registerLocale,
+  getName,
+  getNames,
+  getAlpha2Code,
+  getAlpha3Code,
+  getAlpha2Codes,
+  getAlpha3Codes,
+  getSimpleAlpha2Codes,
+  getSimpleAlpha3Codes,
+  alpha2ToAlpha3,
+  alpha3ToAlpha2,
+  getNumericCodes,
+  alpha2ToNumeric,
+  alpha3ToNumeric,
+  numericToAlpha2,
+  numericToAlpha3,
+  isValid,
+  langs,
+  getSupportedLanguages,
+} = mock;

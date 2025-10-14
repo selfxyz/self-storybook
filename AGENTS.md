@@ -296,7 +296,7 @@ yarn test               # Watch mode for debugging
 ```
 
 Common issues:
-- Missing test setup (check vitest.setup.ts)
+- Missing test setup (check vitest.setup.tsx)
 - Incorrect story imports
 - Missing Testing Library queries
 - React Native Web not rendering correctly

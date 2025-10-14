@@ -11,7 +11,7 @@ const preview: Preview = {
     },
     options: {
       storySort: {
-        order: ['React Native', ['Button', 'Header', 'Page']],
+        order: ['Mobile SDK', ['Typography', 'Buttons', 'Visual', 'Input']],
       },
     },
   },
