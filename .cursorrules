@@ -1,0 +1,227 @@
+# Cursor AI Rules for self-storybook
+
+## Project Context
+React Native component library using React Native Web, developed in Storybook. Designed for designer-developers working with Figma MCP integration.
+
+## Critical Quality Gate
+Before completing ANY component work, MUST run:
+```bash
+yarn validate
+```
+This runs: lint (with auto-fix) + types + tests. All must pass with zero errors.
+
+## Component Development Pattern
+
+### 1. File Structure (ALWAYS create all 4 files)
+```
+src/components/ComponentName/
+├── ComponentName.tsx          # Implementation
+├── ComponentName.stories.tsx  # Storybook stories
+├── ComponentName.test.tsx     # Vitest tests
+└── index.ts                   # Exports
+```
+
+### 2. Component Implementation Rules
+
+**MUST USE React Native primitives:**
+- `View` (not `div`)
+- `Text` (not `span`, `p`, `h1`)
+- `TouchableOpacity` or `Pressable` (not `button`)
+- `Image` from `react-native` (not `img`)
+- `StyleSheet.create()` (not inline CSS strings)
+- `onPress` (not `onClick`)
+
+**TypeScript requirements:**
+- Define and export Props interface
+- Add JSDoc comments to props
+- Use `React.FC<PropsType>`
+- Type all style arrays as `ViewStyle[]` or `TextStyle[]`
+
+**Example:**
+```tsx
+import type React from 'react';
+import { StyleSheet, Text, TouchableOpacity, type ViewStyle } from 'react-native';
+
+export interface ButtonProps {
+  /** Button label */
+  label: string;
+  /** Press handler */
+  onPress?: () => void;
+  /** Style variant */
+  variant?: 'primary' | 'secondary';
+}
+
+export const Button: React.FC<ButtonProps> = ({
+  label,
+  onPress,
+  variant = 'primary',
+}) => {
+  const buttonStyle: ViewStyle[] = [
+    styles.button,
+    variant === 'primary' ? styles.primary : styles.secondary,
+  ].filter(Boolean) as ViewStyle[];
+
+  return (
+    <TouchableOpacity style={buttonStyle} onPress={onPress}>
+      <Text style={styles.text}>{label}</Text>
+    </TouchableOpacity>
+  );
+};
+
+const styles = StyleSheet.create({
+  button: { padding: 16 },
+  primary: { backgroundColor: '#1ea7fd' },
+  secondary: { backgroundColor: '#f0f0f0' },
+  text: { color: 'white' },
+});
+```
+
+### 3. Storybook Stories Rules
+
+**Required patterns:**
+```tsx
+import type { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+  title: 'React Native/Component',
+  component: Component,
+  parameters: { layout: 'centered' },
+  tags: ['autodocs'],  // REQUIRED for auto-docs
+  args: {
+    onPress: fn(),      // REQUIRED for action logging
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+/** Story description */
+export const Default: Story = {
+  args: { label: 'Example' },
+};
+```
+
+### 4. Test File Rules
+
+**MUST use Storybook portable stories pattern:**
+```tsx
+import { render, screen } from '@testing-library/react';
+import { composeStories } from '@storybook/react';
+import { describe, expect, it } from 'vitest';
+import * as stories from './Component.stories';
+
+const { Default } = composeStories(stories);
+
+describe('Component', () => {
+  it('renders correctly', () => {
+    render(<Default />);
+    expect(screen.getByText('Example')).toBeDefined();
+  });
+});
+```
+
+### 5. Index Export (index.ts)
+
+```tsx
+export { Component } from './Component';
+export type { ComponentProps } from './Component';
+```
+
+## Figma MCP Integration
+
+When translating Figma designs:
+1. Extract design tokens first (colors, spacing, typography)
+2. Map Figma layers to React Native primitives
+3. Convert Figma variants to component props
+4. Create a story for each Figma variant
+5. Use StyleSheet.create() for all styles
+
+## Accessibility Requirements
+
+- All touchable elements must have accessible labels
+- Use meaningful text content
+- Test with Storybook's a11y addon
+- Ensure color contrast meets WCAG standards
+
+## Common Mistakes to AVOID
+
+❌ Using web primitives (`div`, `button`, `span`)
+❌ Using `onClick` instead of `onPress`
+❌ Inline CSS strings instead of StyleSheet
+❌ Missing TypeScript types
+❌ Stories without `tags: ['autodocs']`
+❌ Tests not using portable stories pattern
+❌ Forgetting to run `yarn validate`
+❌ Not exporting Props interface
+
+## Commands Reference
+
+```bash
+# Development
+yarn storybook          # Start Storybook
+yarn dev                # Start Vite dev
+
+# Package Management (IMPORTANT)
+yarn install            # Install dependencies
+yarn add <package>      # Add dependency (run yarn install after!)
+
+# Quality (individual)
+yarn nice               # Lint + format (auto-fix)
+yarn types              # Type check
+yarn test               # Tests in watch mode
+
+# Validation (REQUIRED before complete)
+yarn validate           # All quality checks
+```
+
+## Adding New Packages
+
+**ALWAYS run `yarn install` after modifying package.json:**
+
+1. Edit package.json to add new dependency
+2. Run `yarn install` to update lock file
+3. Run `yarn validate` to check for issues
+4. Test the new functionality
+
+This ensures the lock file is updated and dependencies resolve correctly.
+
+## Before Marking Work Complete
+
+1. ✅ All 4 files created (.tsx, .stories.tsx, .test.tsx, index.ts)
+2. ✅ React Native primitives used (no web elements)
+3. ✅ TypeScript Props interface with JSDoc
+4. ✅ Storybook stories with autodocs tag
+5. ✅ Tests using portable stories pattern
+6. ✅ Run `yarn validate` - MUST PASS
+
+## File Organization
+
+Keep components in folders:
+```
+src/components/
+├── Button/
+├── Header/
+├── ComponentName/
+└── index.ts  # Barrel export
+```
+
+## Error Handling
+
+If `yarn validate` fails:
+1. Check Biome errors: `yarn nice`
+2. Check TypeScript: `yarn types`
+3. Check tests: `yarn test:run`
+4. Fix errors and re-run `yarn validate`
+
+## Remember
+
+- Designer-developers expect minimal friction
+- Quality gates prevent production issues
+- React Native Web allows web + mobile support
+- Storybook is the development environment
+- Tests ensure component reliability
+
+**NEVER skip `yarn validate` before completing work.**
+

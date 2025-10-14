@@ -6,7 +6,7 @@ import { Button } from './Button';
  * React Native Button component that works across web and mobile platforms.
  * This button uses React Native primitives and is rendered using React Native Web in Storybook.
  */
-const meta = {
+const meta: Meta<typeof Button> = {
   title: 'React Native/Button',
   component: Button,
   parameters: {
@@ -41,7 +41,7 @@ const meta = {
   args: {
     onClick: fn(),
   },
-} satisfies Meta<typeof Button>;
+};
 
 export default meta;
 type Story = StoryObj<typeof meta>;

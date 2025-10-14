@@ -53,5 +53,13 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": [".storybook/**/*.tsx", ".storybook/**/*.ts"],
+      "javascript": {
+        "jsxRuntime": "reactClassic"
+      }
+    }
+  ]
 }
