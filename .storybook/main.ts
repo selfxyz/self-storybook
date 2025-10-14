@@ -63,32 +63,33 @@ const config: StorybookConfig = {
         rollupOptions: {
           ...config.build?.rollupOptions,
           output: {
+            ...config.build?.rollupOptions?.output,
+            // Prevent circular dependency issues in production builds
+            preserveEntrySignatures: 'exports-only',
             manualChunks: (id) => {
               // Skip vitest-related modules
               if (id.includes('vitest') || id.includes('vite-inject-mocker')) {
                 return;
               }
-              
+
               // Split React and React DOM into separate chunk
               if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
                 return 'react-vendor';
               }
-              
-              // Split React Native Web into its own chunk
-              if (id.includes('node_modules/react-native-web/')) {
+
+              // Bundle React Native Web with React Native SVG to avoid circular deps
+              if (
+                id.includes('node_modules/react-native-web/') ||
+                id.includes('node_modules/react-native-svg/')
+              ) {
                 return 'react-native-web';
               }
-              
-              // Split React Native SVG into its own chunk
-              if (id.includes('node_modules/react-native-svg/')) {
-                return 'react-native-svg';
-              }
-              
+
               // Split Storybook core into its own chunk
               if (id.includes('node_modules/@storybook/')) {
                 return 'storybook-vendor';
               }
-              
+
               // All other node_modules into a general vendor chunk
               if (id.includes('node_modules/')) {
                 return 'vendor';
