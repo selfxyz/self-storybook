@@ -7,7 +7,6 @@ const config: StorybookConfig = {
     '@storybook/addon-docs',
     '@storybook/addon-onboarding',
     '@storybook/addon-a11y',
-    '@storybook/addon-vitest',
   ],
   framework: {
     name: '@storybook/react-vite',
@@ -61,6 +60,43 @@ const config: StorybookConfig = {
           ...config.build?.commonjsOptions,
           transformMixedEsModules: true,
         },
+        rollupOptions: {
+          ...config.build?.rollupOptions,
+          output: {
+            manualChunks: (id) => {
+              // Skip vitest-related modules
+              if (id.includes('vitest') || id.includes('vite-inject-mocker')) {
+                return;
+              }
+              
+              // Split React and React DOM into separate chunk
+              if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
+                return 'react-vendor';
+              }
+              
+              // Split React Native Web into its own chunk
+              if (id.includes('node_modules/react-native-web/')) {
+                return 'react-native-web';
+              }
+              
+              // Split React Native SVG into its own chunk
+              if (id.includes('node_modules/react-native-svg/')) {
+                return 'react-native-svg';
+              }
+              
+              // Split Storybook core into its own chunk
+              if (id.includes('node_modules/@storybook/')) {
+                return 'storybook-vendor';
+              }
+              
+              // All other node_modules into a general vendor chunk
+              if (id.includes('node_modules/')) {
+                return 'vendor';
+              }
+            },
+          },
+        },
+        chunkSizeWarningLimit: 3000, // Increase limit to accommodate test infrastructure files
       },
     };
   },
