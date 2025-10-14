@@ -20,6 +20,7 @@ const config: StorybookConfig = {
         ...config.define,
         global: 'globalThis',
         __DEV__: 'false',
+        'process.env': '{}',
       },
       resolve: {
         ...config.resolve,
@@ -28,6 +29,8 @@ const config: StorybookConfig = {
           'react-native': 'react-native-web',
           'react-native/Libraries/Utilities/codegenNativeComponent':
             'react-native-web/dist/cjs/modules/UnimplementedView',
+          buffer: 'buffer/',
+          process: 'process/browser',
         },
         extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.tsx', '.ts', '.jsx', '.js'],
       },
