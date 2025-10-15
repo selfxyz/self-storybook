@@ -1,4 +1,5 @@
 {
+  "installCommand": "bash scripts/install-sdk.sh && yarn install",
   "buildCommand": "yarn build-storybook",
   "outputDirectory": "storybook-static"
 }
