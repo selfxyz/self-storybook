@@ -7,7 +7,10 @@ type Updater = {
   digest: (encoding?: 'hex') => string | Uint8Array;
 };
 
-function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
+function concatUint8Arrays(
+  a: Uint8Array<ArrayBufferLike>,
+  b: Uint8Array<ArrayBufferLike>,
+): Uint8Array<ArrayBufferLike> {
   const out = new Uint8Array(a.length + b.length);
   out.set(a, 0);
   out.set(b, a.length);
@@ -17,7 +20,7 @@ function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
 export const md5 = {
   create() {
     let finalized = false;
-    let data = new Uint8Array(0);
+    let data: Uint8Array<ArrayBufferLike> = new Uint8Array(0);
     const api: Updater = {
       update(chunk: string | Uint8Array) {
         if (finalized) {

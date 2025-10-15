@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import type { StorybookConfig } from '@storybook/react-vite';
-import type { Plugin } from 'vite';
+import type { Alias, Plugin } from 'vite';
 
 // Plugin to inject missing React Native APIs into react-native-web
 const reactNativeWebPlugin = (): Plugin => ({
@@ -154,8 +154,8 @@ const config: StorybookConfig = {
     const commonLocalVirtual = path.join(projectRoot, '.storybook/shims/self-common-virtual.ts');
 
     // Normalize any existing aliases into array form so we can add regex aliases
-    const existingAliases = Array.isArray(config.resolve?.alias)
-      ? (config.resolve?.alias as any[])
+    const existingAliases: Alias[] = Array.isArray(config.resolve?.alias)
+      ? (config.resolve?.alias as Alias[])
       : Object.entries(config.resolve?.alias || {}).map(([find, replacement]) => ({
           find,
           replacement,
