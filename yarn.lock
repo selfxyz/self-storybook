@@ -2224,9 +2224,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@selfxyz/common@file:../selfapp/common::locator=self-storybook%40workspace%3A.":
+"@selfxyz/common@file:.local-packages/common::locator=self-storybook%40workspace%3A.":
   version: 0.0.9
-  resolution: "@selfxyz/common@file:../selfapp/common#../selfapp/common::hash=af5e19&locator=self-storybook%40workspace%3A."
+  resolution: "@selfxyz/common@file:.local-packages/common#.local-packages/common::hash=c32bd5&locator=self-storybook%40workspace%3A."
   dependencies:
     "@anon-aadhaar/core": "npm:@selfxyz/anon-aadhaar-core@^0.0.1"
     "@noble/hashes": "npm:^1.5.0"
@@ -2257,19 +2257,17 @@ __metadata:
     snarkjs: "npm:^0.7.5"
     typescript-parser: "npm:^2.6.1"
     uuid: "npm:^11.1.0"
-  checksum: 10c0/2922a46bcd867e9e0ac9481b457d9c97a8c0baae662a7611c2e2d4dbd45adc85df25b96f6c654a6690c4d1f7cb193275613f15d3a3d458eff800366355fbf9e8
+  checksum: 10c0/e3df230e371504f504052faca3d411150d0c79263773c2c1fc5d07cd3fd047645ef8f649666e938f25fc040d66f59f45516c72d16ea0af5d65ee82ab7db040ad
   languageName: node
   linkType: hard
 
-"@selfxyz/mobile-sdk-alpha@file:../selfapp/packages/mobile-sdk-alpha::locator=self-storybook%40workspace%3A.":
+"@selfxyz/mobile-sdk-alpha@file:.local-packages/mobile-sdk-alpha::locator=self-storybook%40workspace%3A.":
   version: 0.0.1
-  resolution: "@selfxyz/mobile-sdk-alpha@file:../selfapp/packages/mobile-sdk-alpha#../selfapp/packages/mobile-sdk-alpha::hash=b09828&locator=self-storybook%40workspace%3A."
+  resolution: "@selfxyz/mobile-sdk-alpha@file:.local-packages/mobile-sdk-alpha#.local-packages/mobile-sdk-alpha::hash=2260a1&locator=self-storybook%40workspace%3A."
   dependencies:
     "@babel/runtime": "npm:^7.28.3"
-    "@selfxyz/common": "workspace:^"
-    "@xstate/react": "npm:^5.0.5"
+    "@selfxyz/common": "file:../common"
     node-forge: "npm:^1.3.1"
-    react-native-svg-circle-country-flags: "npm:^0.2.2"
     socket.io-client: "npm:^4.8.1"
     uuid: "npm:^11.1.0"
     xstate: "npm:^5.20.2"
@@ -2277,9 +2275,11 @@ __metadata:
   peerDependencies:
     react: ^18.3.1
     react-native: 0.76.9
-    react-native-localize: "*"
-    react-native-svg: "*"
-  checksum: 10c0/393a23a5bb61c61fb31b917686ea3bdc4dc9afacef74b3fbd17dc66cb48f861f034b1640de7a983d2e8d632f1cc05f72f8c95b3a4430c35a32d1c988de506fb6
+    tamagui: 1.126.x
+  peerDependenciesMeta:
+    tamagui:
+      optional: false
+  checksum: 10c0/d3adaeca3ba94f17c6c5a1146075c5d4dff4aeed4a07c5f5ce5a69c9d91572f555b747b457dd6508c213e77c8ede8417f62395b3813b6b9a986212abefd2b5d6
   languageName: node
   linkType: hard
 
@@ -4368,22 +4368,6 @@ __metadata:
     loupe: "npm:^3.1.2"
     tinyrainbow: "npm:^1.2.0"
   checksum: 10c0/81a346cd72b47941f55411f5df4cc230e5f740d1e97e0d3f771b27f007266fc1f28d0438582f6409ea571bc0030ed37f684c64c58d1947d6298d770c21026fdf
-  languageName: node
-  linkType: hard
-
-"@xstate/react@npm:^5.0.5":
-  version: 5.0.5
-  resolution: "@xstate/react@npm:5.0.5"
-  dependencies:
-    use-isomorphic-layout-effect: "npm:^1.1.2"
-    use-sync-external-store: "npm:^1.2.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    xstate: ^5.19.4
-  peerDependenciesMeta:
-    xstate:
-      optional: true
-  checksum: 10c0/2e22ef30f3d642d424d219106512234bc77dbdb9a8f57a363699eb3d82e69586ab3a670d7eb9b3b7f1fda990bea10e3e62425fdad5ce7590e4a6715eac7c341a
   languageName: node
   linkType: hard
 
@@ -10109,8 +10093,8 @@ __metadata:
     "@biomejs/biome": "npm:2.2.6"
     "@chromatic-com/storybook": "npm:^4.1.1"
     "@eslint/js": "npm:^9.36.0"
-    "@selfxyz/common": "file:../selfapp/common"
-    "@selfxyz/mobile-sdk-alpha": "file:../selfapp/packages/mobile-sdk-alpha"
+    "@selfxyz/common": "file:.local-packages/common"
+    "@selfxyz/mobile-sdk-alpha": "file:.local-packages/mobile-sdk-alpha"
     "@storybook/addon-a11y": "npm:^9.1.10"
     "@storybook/addon-docs": "npm:^9.1.10"
     "@storybook/addon-onboarding": "npm:^9.1.10"
@@ -11462,18 +11446,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-isomorphic-layout-effect@npm:^1.1.2":
-  version: 1.2.1
-  resolution: "use-isomorphic-layout-effect@npm:1.2.1"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: 10c0/4d3c1124d630fbe09c1d2a16af0cd78ac2fe1d22eb24a178363e3d84a897659cc04e8e8cd71f66ff78ff75ef8287fa72e746cb213b96c1097e70e4b4ed69f63f
-  languageName: node
-  linkType: hard
-
 "use-sidecar@npm:^1.1.3":
   version: 1.1.3
   resolution: "use-sidecar@npm:1.1.3"
@@ -11490,7 +11462,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.2.0, use-sync-external-store@npm:^1.2.2":
+"use-sync-external-store@npm:^1.2.2":
   version: 1.6.0
   resolution: "use-sync-external-store@npm:1.6.0"
   peerDependencies:
