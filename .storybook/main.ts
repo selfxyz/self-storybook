@@ -152,6 +152,10 @@ const config: StorybookConfig = {
           scheduler: 'scheduler/index.js',
         },
         extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.tsx', '.ts', '.jsx', '.js'],
+        // Ensure Rollup/Vite can resolve package exports that specify react-native/browser conditions
+        conditions: ['react-native', 'browser', 'import', 'default'],
+        // Prefer react-native and ESM entry points when available
+        mainFields: ['react-native', 'module', 'browser', 'main'],
       },
       optimizeDeps: {
         ...config.optimizeDeps,
@@ -160,6 +164,9 @@ const config: StorybookConfig = {
           'react-native-web',
           'react-native-svg',
           'scheduler',
+          '@selfxyz/mobile-sdk-alpha',
+          '@selfxyz/mobile-sdk-alpha/components',
+          '@selfxyz/common',
         ],
         exclude: [...(config.optimizeDeps?.exclude || []), 'react-native'],
         esbuildOptions: {
