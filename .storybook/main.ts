@@ -27,6 +27,8 @@ const reactNativeWebPlugin = (): Plugin => ({
       const shimCode = `
 /* STORYBOOK_SHIM_APPLIED */
 
+import * as React from 'react';
+
 // Shim for requireNativeComponent
 ${
   hasUnimplementedView
@@ -39,7 +41,6 @@ export const requireNativeComponent = (name) => {
     : `
 const MockNativeComponent = (props) => {
   if (typeof window !== 'undefined') {
-    const React = require('react');
     return React.createElement('div', {
       ...props,
       'data-native-component': 'mock',
@@ -60,10 +61,37 @@ export const requireNativeComponent = (name) => {
 // Return a mock ref that can be used in components
 export const useAnimatedValue = (initialValue) => {
   if (typeof window !== 'undefined') {
-    const { useRef } = require('react');
-    return useRef({ value: initialValue, setValue: () => {} }).current;
+    const ref = React.useRef(null);
+    if (!ref.current) {
+      const animated = {
+        _value: initialValue,
+        setValue: (v) => {
+          animated._value = v;
+        },
+        // Very small linear interpolation fallback for web
+        interpolate: ({ inputRange = [0, 1], outputRange = [0, 1] } = {}) => {
+          const v = typeof animated._value === 'number' ? animated._value : 0;
+          const inMin = inputRange[0];
+          const inMax = inputRange[inputRange.length - 1] ?? inMin + 1;
+          const t = inMax === inMin ? 0 : (v - inMin) / (inMax - inMin);
+          const outMin = outputRange[0];
+          const outMax = outputRange[outputRange.length - 1] ?? outMin;
+          return outMin + t * (outMax - outMin);
+        },
+        addListener: () => {},
+        removeAllListeners: () => {},
+      };
+      ref.current = animated;
+    }
+    return ref.current;
   }
-  return { value: initialValue, setValue: () => {} };
+  return {
+    _value: initialValue,
+    setValue: () => {},
+    interpolate: ({ outputRange = [0, 1] } = {}) => outputRange[0],
+    addListener: () => {},
+    removeAllListeners: () => {},
+  };
 };
 `;
       return code + shimCode;
