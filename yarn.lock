@@ -2224,9 +2224,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@selfxyz/common@file:.local-packages/common::locator=self-storybook%40workspace%3A.":
+"@selfxyz/common@file:../common::locator=%40selfxyz%2Fmobile-sdk-alpha%40file%3A.local-packages%2Fmobile-sdk-alpha%23.local-packages%2Fmobile-sdk-alpha%3A%3Ahash%3D59a891%26locator%3Dself-storybook%2540workspace%253A.":
   version: 0.0.9
-  resolution: "@selfxyz/common@file:.local-packages/common#.local-packages/common::hash=c32bd5&locator=self-storybook%40workspace%3A."
+  resolution: "@selfxyz/common@file:../common#../common::hash=461d0e&locator=%40selfxyz%2Fmobile-sdk-alpha%40file%3A.local-packages%2Fmobile-sdk-alpha%23.local-packages%2Fmobile-sdk-alpha%3A%3Ahash%3D59a891%26locator%3Dself-storybook%2540workspace%253A."
   dependencies:
     "@anon-aadhaar/core": "npm:@selfxyz/anon-aadhaar-core@^0.0.1"
     "@noble/hashes": "npm:^1.5.0"
@@ -2240,6 +2240,7 @@ __metadata:
     axios: "npm:^1.7.2"
     buffer: "npm:^6.0.3"
     country-emoji: "npm:^1.5.6"
+    country-iso-3-to-2: "npm:^1.1.1"
     elliptic: "npm:^6.5.5"
     ethers: "npm:^6.14.4"
     fs: "npm:^0.0.1-security"
@@ -2257,13 +2258,50 @@ __metadata:
     snarkjs: "npm:^0.7.5"
     typescript-parser: "npm:^2.6.1"
     uuid: "npm:^11.1.0"
-  checksum: 10c0/e3df230e371504f504052faca3d411150d0c79263773c2c1fc5d07cd3fd047645ef8f649666e938f25fc040d66f59f45516c72d16ea0af5d65ee82ab7db040ad
+  checksum: 10c0/e0a40da101f9d346b41629fe86dad93a7b1e6b0154c65af829edf07fd38ad80078cf31ce57300c3a5baad0889db611c0ba7fc417f81d34798056f8ba99c67fc3
+  languageName: node
+  linkType: hard
+
+"@selfxyz/common@npm:^0.0.9":
+  version: 0.0.9
+  resolution: "@selfxyz/common@npm:0.0.9"
+  dependencies:
+    "@anon-aadhaar/core": "npm:@selfxyz/anon-aadhaar-core@^0.0.1"
+    "@openpassport/zk-kit-imt": "npm:^0.0.5"
+    "@openpassport/zk-kit-lean-imt": "npm:^0.0.6"
+    "@openpassport/zk-kit-smt": "npm:^0.0.1"
+    "@peculiar/x509": "npm:^1.12.3"
+    "@stablelib/cbor": "npm:^2.0.1"
+    asn1.js: "npm:^5.4.1"
+    asn1js: "npm:^3.0.5"
+    axios: "npm:^1.7.2"
+    buffer: "npm:^6.0.3"
+    country-emoji: "npm:^1.5.6"
+    country-iso-3-to-2: "npm:^1.1.1"
+    elliptic: "npm:^6.5.5"
+    ethers: "npm:^6.14.4"
+    fs: "npm:^0.0.1-security"
+    hash.js: "npm:^1.1.7"
+    i18n-iso-countries: "npm:^7.13.0"
+    js-sha1: "npm:^0.7.0"
+    js-sha256: "npm:^0.11.0"
+    js-sha512: "npm:^0.9.0"
+    json-to-ts: "npm:^2.1.0"
+    jsrsasign: "npm:^11.1.0"
+    node-forge: "github:remicolin/forge#17a11a632dd0e50343b3b8393245a2696f78afbb"
+    path: "npm:^0.12.7"
+    pkijs: "npm:^3.2.4"
+    poseidon-lite: "npm:^0.2.0"
+    snarkjs: "npm:^0.7.5"
+    typescript-parser: "npm:^2.6.1"
+    uuid: "npm:^11.1.0"
+  checksum: 10c0/733af5c5471eb4ca690536c457a0d17afef75ce1a658b736140968905b3af143baff1dfa1d25b08b8742a748e67c9272aef3cef21541a7436172531d45d5a797
   languageName: node
   linkType: hard
 
 "@selfxyz/mobile-sdk-alpha@file:.local-packages/mobile-sdk-alpha::locator=self-storybook%40workspace%3A.":
   version: 0.0.1
-  resolution: "@selfxyz/mobile-sdk-alpha@file:.local-packages/mobile-sdk-alpha#.local-packages/mobile-sdk-alpha::hash=2260a1&locator=self-storybook%40workspace%3A."
+  resolution: "@selfxyz/mobile-sdk-alpha@file:.local-packages/mobile-sdk-alpha#.local-packages/mobile-sdk-alpha::hash=59a891&locator=self-storybook%40workspace%3A."
   dependencies:
     "@babel/runtime": "npm:^7.28.3"
     "@selfxyz/common": "file:../common"
@@ -2279,7 +2317,7 @@ __metadata:
   peerDependenciesMeta:
     tamagui:
       optional: false
-  checksum: 10c0/d3adaeca3ba94f17c6c5a1146075c5d4dff4aeed4a07c5f5ce5a69c9d91572f555b747b457dd6508c213e77c8ede8417f62395b3813b6b9a986212abefd2b5d6
+  checksum: 10c0/8578fe7fe0bbcea9a120d0146887c1cb2999011e7f44ca63ad30c2fe314f2605d9e1f8081846ddb5d39ca89f1476c55f5c7d827b5b3401c800f6dd12bb2c2bee
   languageName: node
   linkType: hard
 
@@ -5377,6 +5415,13 @@ __metadata:
   version: 1.5.6
   resolution: "country-emoji@npm:1.5.6"
   checksum: 10c0/8166ef4e13ff82b558558e05ad4e26bceb6a71ef5d1863c6955ddfd1b2823f2c4fee9fb8538d3cf83716a05d3035a1ebcdc894a3a629644a1f1be728c98595f8
+  languageName: node
+  linkType: hard
+
+"country-iso-3-to-2@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "country-iso-3-to-2@npm:1.1.1"
+  checksum: 10c0/ed46398caa51ec1a62a5e8e3dcf9cc6a9afe8ffc7dc9b15177f3ff9d4a241e6a3e8a315d630610e254408d4f15d71446df909811663df1eab928a34be7ee16e0
   languageName: node
   linkType: hard
 
@@ -10093,7 +10138,7 @@ __metadata:
     "@biomejs/biome": "npm:2.2.6"
     "@chromatic-com/storybook": "npm:^4.1.1"
     "@eslint/js": "npm:^9.36.0"
-    "@selfxyz/common": "file:.local-packages/common"
+    "@selfxyz/common": "npm:^0.0.9"
     "@selfxyz/mobile-sdk-alpha": "file:.local-packages/mobile-sdk-alpha"
     "@storybook/addon-a11y": "npm:^9.1.10"
     "@storybook/addon-docs": "npm:^9.1.10"

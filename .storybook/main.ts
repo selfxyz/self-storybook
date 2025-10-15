@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import path from 'node:path';
 import type { StorybookConfig } from '@storybook/react-vite';
 import type { Plugin } from 'vite';
 
@@ -122,6 +125,42 @@ const config: StorybookConfig = {
       // Your production-specific Vite config adjustments here
     }
 
+    // Dynamically resolve SDK subpath exports so Rollup can follow them reliably
+    const require = createRequire(import.meta.url);
+    let mobileSdkComponentsPath: string | undefined;
+    try {
+      // Use Node's resolution to respect package "exports" conditions
+      mobileSdkComponentsPath = require.resolve('@selfxyz/mobile-sdk-alpha/components');
+    } catch {
+      // leave undefined if not resolvable at config time
+    }
+
+    // Fallback to local source if dist build is missing in .local-packages
+    const projectRoot = process.cwd();
+    const mobileSdkRoot = path.resolve(projectRoot, '.local-packages/mobile-sdk-alpha');
+    const mobileSdkSrcComponents = path.join(mobileSdkRoot, 'src/components/index.ts');
+    const mobileSdkSrcRootIndex = path.join(mobileSdkRoot, 'src/index.ts');
+    const useSrcFallback = !mobileSdkComponentsPath && fs.existsSync(mobileSdkSrcComponents);
+
+    // Resolve @selfxyz/common; if its dist is missing, alias to its src directory
+    const commonRoot = path.resolve(projectRoot, '.local-packages/common');
+    const commonDistEsmIndex = path.join(commonRoot, 'dist/esm/index.js');
+    const _commonSrcDir = path.join(commonRoot, 'src');
+    const _hasCommonDist = fs.existsSync(commonDistEsmIndex);
+    const commonPublishedVirtual = path.join(
+      projectRoot,
+      '.storybook/shims/self-common-published-virtual.ts',
+    );
+    const commonLocalVirtual = path.join(projectRoot, '.storybook/shims/self-common-virtual.ts');
+
+    // Normalize any existing aliases into array form so we can add regex aliases
+    const existingAliases = Array.isArray(config.resolve?.alias)
+      ? (config.resolve?.alias as any[])
+      : Object.entries(config.resolve?.alias || {}).map(([find, replacement]) => ({
+          find,
+          replacement,
+        }));
+
     return {
       ...config,
       plugins: [...(config.plugins || []), reactNativeWebPlugin()],
@@ -142,20 +181,93 @@ const config: StorybookConfig = {
       },
       resolve: {
         ...config.resolve,
-        alias: {
-          ...config.resolve?.alias,
-          'react-native': 'react-native-web',
-          'react-native/Libraries/Utilities/codegenNativeComponent':
-            'react-native-web/dist/cjs/modules/UnimplementedView',
-          buffer: 'buffer/',
-          process: 'process/browser',
-          scheduler: 'scheduler/index.js',
-        },
+        alias: [
+          ...existingAliases,
+          { find: 'react-native', replacement: 'react-native-web' },
+          {
+            find: 'react-native/Libraries/Utilities/codegenNativeComponent',
+            replacement: 'react-native-web/dist/cjs/modules/UnimplementedView',
+          },
+          { find: 'buffer', replacement: 'buffer/' },
+          { find: 'process', replacement: 'process/browser' },
+          { find: 'scheduler', replacement: 'scheduler/index.js' },
+          // Shim noble hashes legacy/md5 subpaths for Storybook builds
+          {
+            find: '@noble/hashes/legacy',
+            replacement: path.join(projectRoot, '.storybook/shims/noble-hashes-legacy-shim.ts'),
+          },
+          {
+            find: '@noble/hashes/md5',
+            replacement: path.join(projectRoot, '.storybook/shims/noble-hashes-legacy-shim.ts'),
+          },
+          // Use ethers as-is (published package)
+          // Ensure SDK components subpath always resolves in both dev and build
+          // Ensure SDK components subpath and root always resolve (prefer built if available)
+          ...(mobileSdkComponentsPath
+            ? [
+                {
+                  find: '@selfxyz/mobile-sdk-alpha/components',
+                  replacement: mobileSdkComponentsPath,
+                },
+                {
+                  find: '@selfxyz/mobile-sdk-alpha',
+                  replacement: path.join(mobileSdkRoot, 'src/index.ts'),
+                },
+              ]
+            : useSrcFallback
+              ? [
+                  {
+                    find: '@selfxyz/mobile-sdk-alpha/components',
+                    replacement: path.join(
+                      projectRoot,
+                      '.storybook/shims/mobile-sdk-components-web.tsx',
+                    ),
+                  },
+                  { find: '@selfxyz/mobile-sdk-alpha', replacement: mobileSdkSrcRootIndex },
+                ]
+              : []),
+          // Map @selfxyz/common to published or local virtual shim depending on availability
+          {
+            find: /^@selfxyz\/common$/,
+            replacement: _hasCommonDist ? commonPublishedVirtual : commonLocalVirtual,
+          },
+          // When local dist is missing, also map subpath imports directly to source files
+          ...(!_hasCommonDist
+            ? [
+                {
+                  find: /^@selfxyz\/common\/(.+)$/,
+                  replacement: path.join(_commonSrcDir, '$1'),
+                },
+                // Fix bad absolute-internal imports like "src/..." inside local common sources
+                {
+                  find: /^src\/(.+)$/,
+                  replacement: path.join(_commonSrcDir, '$1'),
+                },
+              ]
+            : []),
+          // Shim React Native renderer portals for Tamagui on web
+          {
+            find: 'react-native/Libraries/Renderer/shims/ReactFabric',
+            replacement: path.join(projectRoot, '.storybook/shims/react-native-portal-shim.js'),
+          },
+          {
+            find: 'react-native/Libraries/Renderer/shims/ReactNative',
+            replacement: path.join(projectRoot, '.storybook/shims/react-native-portal-shim.js'),
+          },
+          {
+            find: 'react-native-web/Libraries/Renderer/shims/ReactFabric',
+            replacement: path.join(projectRoot, '.storybook/shims/react-native-portal-shim.js'),
+          },
+          {
+            find: 'react-native-web/Libraries/Renderer/shims/ReactNative',
+            replacement: path.join(projectRoot, '.storybook/shims/react-native-portal-shim.js'),
+          },
+        ],
         extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.tsx', '.ts', '.jsx', '.js'],
-        // Ensure Rollup/Vite can resolve package exports that specify react-native/browser conditions
-        conditions: ['react-native', 'browser', 'import', 'default'],
-        // Prefer react-native and ESM entry points when available
-        mainFields: ['react-native', 'module', 'browser', 'main'],
+        // Ensure Rollup/Vite resolves web-first exports and avoids native entries
+        conditions: ['browser', 'import', 'module', 'default'],
+        // Prefer browser and ESM entry points for Storybook web build
+        mainFields: ['browser', 'module', 'main'],
       },
       optimizeDeps: {
         ...config.optimizeDeps,
@@ -164,11 +276,20 @@ const config: StorybookConfig = {
           'react-native-web',
           'react-native-svg',
           'scheduler',
-          '@selfxyz/mobile-sdk-alpha',
-          '@selfxyz/mobile-sdk-alpha/components',
+          // Only prebundle SDK when using built dist; avoid prebundling TS source
+          ...(!useSrcFallback
+            ? ['@selfxyz/mobile-sdk-alpha', '@selfxyz/mobile-sdk-alpha/components']
+            : []),
           '@selfxyz/common',
         ],
-        exclude: [...(config.optimizeDeps?.exclude || []), 'react-native'],
+        exclude: [
+          ...(config.optimizeDeps?.exclude || []),
+          'react-native',
+          ...(useSrcFallback
+            ? ['@selfxyz/mobile-sdk-alpha', '@selfxyz/mobile-sdk-alpha/components']
+            : []),
+          // Keep @selfxyz/common included (published package)
+        ],
         esbuildOptions: {
           ...config.optimizeDeps?.esbuildOptions,
           resolveExtensions: [
