@@ -8,6 +8,14 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./.storybook/vitest.setup.tsx'],
+    transformMode: {
+      web: [/\.[jt]sx?$/],
+    },
+    server: {
+      deps: {
+        inline: ['@selfxyz/mobile-sdk-alpha', '@selfxyz/common'],
+      },
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
@@ -34,6 +42,11 @@ export default defineConfig({
       {
         find: 'react-native/Libraries/Utilities/codegenNativeComponent',
         replacement: 'react-native-web/dist/cjs/modules/UnimplementedView',
+      },
+      {
+        find: /^i18n-iso-countries\/langs\/.*\.json$/,
+        replacement:
+          '/Volumes/files/Projects/selfxyz/self-storybook/.storybook/mocks/i18n-iso-countries.ts',
       },
       {
         find: /^i18n-iso-countries$/,

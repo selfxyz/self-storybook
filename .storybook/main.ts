@@ -5,55 +5,65 @@ import type { Plugin } from 'vite';
 const reactNativeWebPlugin = (): Plugin => ({
   name: 'react-native-web-shim',
   transform(code, id) {
-    // Only transform the react-native-web main export
-    if (id.includes('node_modules/react-native-web/dist/index.js')) {
+    // Only transform the react-native-web main export (both source and optimized deps)
+    if (
+      id.includes('node_modules/react-native-web/dist/index.js') ||
+      id.includes('react-native-web.js')
+    ) {
       // Check if we've already applied the shim
       if (code.includes('/* STORYBOOK_SHIM_APPLIED */')) {
         return null; // Already transformed, skip
       }
 
-      // Check if UnimplementedView is already imported/exported
+      // Check if requireNativeComponent is already present
+      if (code.includes('requireNativeComponent')) {
+        return null; // Already has it, skip
+      }
+
+      // Check if UnimplementedView is available
       const hasUnimplementedView = code.includes('UnimplementedView');
 
-      // Add missing exports using the existing UnimplementedView
-      const shimCode = hasUnimplementedView
-        ? `
+      // Create a simple fallback component for requireNativeComponent
+      const shimCode = `
 /* STORYBOOK_SHIM_APPLIED */
+
+// Shim for requireNativeComponent
 ${
-  code.includes('requireNativeComponent')
-    ? ''
-    : `
+  hasUnimplementedView
+    ? `
 export const requireNativeComponent = (name) => {
   console.warn(\`requireNativeComponent("\${name}") is not supported on web\`);
   return UnimplementedView;
 };
 `
-}
-// Shim for useAnimatedValue - not supported in react-native-web
-// Return a mock ref that can be used in components
-export const useAnimatedValue = (initialValue) => {
-  const { useRef } = require('react');
-  return useRef({ value: initialValue, setValue: () => {} }).current;
-};
-`
-        : `
-/* STORYBOOK_SHIM_APPLIED */
-import UnimplementedView from './cjs/modules/UnimplementedView';
-${
-  code.includes('requireNativeComponent')
-    ? ''
     : `
+const MockNativeComponent = (props) => {
+  if (typeof window !== 'undefined') {
+    const React = require('react');
+    return React.createElement('div', {
+      ...props,
+      'data-native-component': 'mock',
+      style: { border: '1px dashed red', padding: '8px', ...props.style }
+    }, props.children || 'Native Component (Mock)');
+  }
+  return null;
+};
+
 export const requireNativeComponent = (name) => {
   console.warn(\`requireNativeComponent("\${name}") is not supported on web\`);
-  return UnimplementedView;
+  return MockNativeComponent;
 };
 `
 }
+
 // Shim for useAnimatedValue - not supported in react-native-web
 // Return a mock ref that can be used in components
 export const useAnimatedValue = (initialValue) => {
-  const { useRef } = require('react');
-  return useRef({ value: initialValue, setValue: () => {} }).current;
+  if (typeof window !== 'undefined') {
+    const { useRef } = require('react');
+    return useRef({ value: initialValue, setValue: () => {} }).current;
+  }
+  return { value: initialValue, setValue: () => {} };
 };
 `;
       return code + shimCode;

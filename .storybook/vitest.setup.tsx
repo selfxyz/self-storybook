@@ -97,12 +97,38 @@ vi.mock('@selfxyz/mobile-sdk-alpha/components', () => ({
   ),
 }));
 
-// Mock useSelfClient hook
+// Mock @selfxyz/mobile-sdk-alpha for tests
+// Note: preview.tsx uses these in decorators, so we need to mock them
 vi.mock('@selfxyz/mobile-sdk-alpha', () => ({
   useSelfClient: () => ({
     trackEvent: vi.fn(),
   }),
+  createListenersMap: () => ({
+    map: new Map(),
+    addListener: vi.fn(),
+  }),
+  defaultConfig: {
+    timeouts: { scanMs: 60000 },
+    features: {},
+  },
+  SelfClientProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
+
+// Mock requireNativeComponent for React Native components
+vi.mock('react-native', async () => {
+  const actual = await vi.importActual<typeof import('react-native-web')>('react-native-web');
+  return {
+    ...actual,
+    requireNativeComponent: vi.fn((name: string) => {
+      // Return a mock component that renders a div with the component name
+      return ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => (
+        <div data-native-component={name} {...props}>
+          {children}
+        </div>
+      );
+    }),
+  };
+});
 
 // This is an important step to apply the right configuration when testing your stories.
 // More info at: https://storybook.js.org/docs/api/portable-stories/portable-stories-vitest#setprojectannotations

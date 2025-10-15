@@ -17,6 +17,7 @@
     "preview": "vite preview",
     "preview-storybook": "yarn build-storybook && npx serve storybook-static",
     "storybook": "storybook dev -p 6006",
+    "storybook:fresh": "rm -rf storybook-static node_modules/.cache/storybook && storybook dev -p 6006",
     "test": "NODE_OPTIONS='--experimental-json-modules' vitest",
     "test:coverage": "NODE_OPTIONS='--experimental-json-modules' vitest run --coverage",
     "test:run": "NODE_OPTIONS='--experimental-json-modules' vitest run",
