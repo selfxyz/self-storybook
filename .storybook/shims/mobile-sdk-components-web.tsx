@@ -9,6 +9,7 @@ export const AbstractButton: React.FC<{
   borderColor?: string;
   borderWidth?: number;
 }> = ({ children, onPress, bgColor, color, borderColor, borderWidth }) => {
+  const hasBorder = !!borderColor && !!borderWidth && borderWidth > 0;
   return (
     <button
       type="button"
@@ -16,9 +17,9 @@ export const AbstractButton: React.FC<{
       style={{
         backgroundColor: bgColor,
         color,
-        borderColor,
-        borderWidth,
-        borderStyle: borderWidth ? 'solid' : undefined,
+        borderColor: hasBorder ? borderColor : undefined,
+        borderWidth: hasBorder ? borderWidth : undefined,
+        borderStyle: hasBorder ? 'solid' : undefined,
         padding: 12,
         borderRadius: 8,
       }}
@@ -33,17 +34,18 @@ export const PrimaryButton: React.FC<{
   onPress?: () => void;
   disabled?: boolean;
 }> = ({ children, onPress, disabled }) => {
+  const hasBorder = false; // neutral: no border unless provided by real component
   return (
     <button
       type="button"
       onClick={onPress}
       disabled={disabled}
       style={{
-        backgroundColor: disabled ? '#ffffff' : '#000000',
-        color: disabled ? '#64748b' : '#f59e0b',
+        backgroundColor: undefined,
+        color: undefined,
         padding: 12,
         borderRadius: 8,
-        border: '1px solid #000000',
+        border: hasBorder ? '1px solid #000000' : undefined,
       }}
     >
       {children}
@@ -55,16 +57,17 @@ export const SecondaryButton: React.FC<{
   children?: React.ReactNode;
   onPress?: () => void;
 }> = ({ children, onPress }) => {
+  const hasBorder = false; // neutral: no border by default
   return (
     <button
       type="button"
       onClick={onPress}
       style={{
-        backgroundColor: '#ffffff',
-        color: '#000000',
+        backgroundColor: undefined,
+        color: undefined,
         padding: 12,
         borderRadius: 8,
-        border: '1px solid #000000',
+        border: hasBorder ? '1px solid #000000' : undefined,
       }}
     >
       {children}
@@ -121,17 +124,18 @@ export const HeldPrimaryButton: React.FC<{
   onPress?: () => void;
   disabled?: boolean;
 }> = ({ children, onPress, disabled }) => {
+  const hasBorder = false; // neutral
   return (
     <button
       type="button"
       onClick={onPress}
       disabled={disabled}
       style={{
-        backgroundColor: disabled ? '#e5e7eb' : '#111827',
-        color: disabled ? '#9ca3af' : '#f59e0b',
+        backgroundColor: undefined,
+        color: undefined,
         padding: 12,
         borderRadius: 8,
-        border: '1px solid #111827',
+        border: hasBorder ? '1px solid #111827' : undefined,
       }}
     >
       {children}
@@ -141,23 +145,40 @@ export const HeldPrimaryButton: React.FC<{
 
 export const HeldPrimaryButtonProveScreen: React.FC<{
   children?: React.ReactNode;
-  onPress?: () => void;
-  disabled?: boolean;
-}> = ({ children, onPress, disabled }) => {
+  onVerify?: () => void;
+  selectedAppSessionId?: string | null;
+  hasScrolledToBottom?: boolean;
+  isReadyToProve?: boolean;
+}> = ({ children, onVerify, selectedAppSessionId, hasScrolledToBottom, isReadyToProve }) => {
+  const hasBorder = false; // neutral
+
+  // Derive a simple placeholder label to mirror native behavior
+  let derivedLabel = 'Preparing...';
+  if (!selectedAppSessionId) {
+    derivedLabel = 'Select a session';
+  } else if (!hasScrolledToBottom) {
+    derivedLabel = 'Scroll to bottom';
+  } else if (isReadyToProve) {
+    derivedLabel = 'Hold to Verify';
+  }
+
+  const content = children ?? derivedLabel;
+
   return (
     <button
       type="button"
-      onClick={onPress}
-      disabled={disabled}
+      onClick={onVerify}
+      aria-label={typeof content === 'string' ? content : 'Prove'}
       style={{
-        backgroundColor: disabled ? '#e5e7eb' : '#111827',
-        color: disabled ? '#9ca3af' : '#f59e0b',
+        backgroundColor: '#f3f4f6',
+        color: '#111827',
         padding: 12,
         borderRadius: 8,
-        border: '1px solid #111827',
+        minWidth: 160,
+        border: hasBorder ? '1px solid #111827' : '1px solid #d1d5db',
       }}
     >
-      {children}
+      {content}
     </button>
   );
 };

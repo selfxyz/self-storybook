@@ -45,7 +45,6 @@ const meta: Meta<typeof AbstractButton> = {
     onPress: fn(),
     bgColor: '#000000',
     color: '#FFFFFF',
-    borderWidth: 2,
   },
 };
 
